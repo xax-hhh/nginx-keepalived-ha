@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首页 — Linux 运维实训平台</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <span class="brand">🐧 Linux 运维实训平台</span>
+        <div class="nav-links">
+            <a href="/index.html" class="active">首页</a>
+            <a href="/users.html">用户管理</a>
+            <button id="logoutBtn">退出登录</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="welcome">
+            <h1>欢迎，<span id="displayName">---</span>！</h1>
+            <p>这是一个 Linux 运维实训演示项目<br>
+               用于练习 Nginx 反向代理、动静分离、Java 服务部署和 MySQL 运维</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="number" id="userCount">0</div>
+                <div class="label">系统用户数</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">Nginx 1.30</div>
+                <div class="label">反向代理</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">Java 21</div>
+                <div class="label">后端服务</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">MySQL 8.4</div>
+                <div class="label">数据库</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const username = localStorage.getItem('username');
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+            document.getElementById('displayName').textContent = username || '用户';
+
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                localStorage.removeItem('token');
+                localStorage.removeItem('username');
+                window.location.href = '/login.html';
+            });
+
+            api.get('/users').then(users => {
+                document.getElementById('userCount').textContent = users.length;
+            }).catch(() => {});
+        });
+    </script>
+</body>
+</html>

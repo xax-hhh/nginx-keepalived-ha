@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户管理 — Linux 运维实训平台</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <span class="brand">🐧 Linux 运维实训平台</span>
+        <div class="nav-links">
+            <a href="/index.html">首页</a>
+            <a href="/users.html" class="active">用户管理</a>
+            <button id="logoutBtn">退出登录</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <h2 id="formTitle">添加用户</h2>
+            <div id="message" class="message"></div>
+            <form id="userForm">
+                <input type="hidden" id="userId">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" placeholder="请输入用户名" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">邮箱</label>
+                    <input type="email" id="email" placeholder="请输入邮箱" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" placeholder="请输入密码（至少6位）" required>
+                </div>
+                <button type="submit" class="btn btn-primary">提 交</button>
+                <button type="button" id="cancelEdit" class="btn btn-secondary" style="display:none;">取消编辑</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>用户列表 (<span id="userCount">0</span>)</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>用户名</th>
+                        <th>邮箱</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/users.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                localStorage.removeItem('token');
+                localStorage.removeItem('username');
+                window.location.href = '/login.html';
+            });
+        });
+    </script>
+</body>
+</html>
