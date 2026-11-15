@@ -3,6 +3,8 @@ package com.ops.demo.service;
 import com.ops.demo.dto.LoginRequest;
 import com.ops.demo.dto.LoginResponse;
 import com.ops.demo.dto.RegisterRequest;
+import com.ops.demo.dto.UpdateUserRequest;
+import com.ops.demo.exception.BusinessException;
 import com.ops.demo.model.User;
 import com.ops.demo.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,10 +29,10 @@ public class UserService {
 
     public User register(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("用户名已存在");
+            throw new BusinessException("用户名已存在");
         }
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("邮箱已被注册");
+            throw new BusinessException("邮箱已被注册");
         }
 
         User user = new User(
@@ -43,10 +45,10 @@ public class UserService {
 
     public LoginResponse authenticate(LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("用户名或密码错误"));
+                .orElseThrow(() -> new BusinessException("用户名或密码错误", 401));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("用户名或密码错误");
+            throw new BusinessException("用户名或密码错误", 401);
         }
 
         String token = jwtService.generateToken(user.getUsername());
@@ -61,17 +63,17 @@ public class UserService {
         return register(request);
     }
 
-    public User updateUser(Long id, RegisterRequest request) {
+    public User updateUser(Long id, UpdateUserRequest request) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("用户不存在"));
+                .orElseThrow(() -> new BusinessException("用户不存在"));
 
         if (!user.getUsername().equals(request.getUsername())
                 && userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("用户名已被占用");
+            throw new BusinessException("用户名已被占用");
         }
         if (!user.getEmail().equals(request.getEmail())
                 && userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("邮箱已被占用");
+            throw new BusinessException("邮箱已被占用");
         }
 
         user.setUsername(request.getUsername());
@@ -84,7 +86,7 @@ public class UserService {
 
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new RuntimeException("用户不存在");
+            throw new BusinessException("用户不存在");
         }
         userRepository.deleteById(id);
     }

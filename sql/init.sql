@@ -1,6 +1,11 @@
 -- ──────────────────────────────────────────────
--- Linux 运维实训项目 — 数据库初始化脚本
+-- Linux 运维实训项目 — 数据库初始化脚本（单机版）
 -- 执行方式: mysql -u root -p < init.sql
+-- 适用架构: 3 服务器（单 MySQL）
+--
+-- ⚠ 主从复制架构请使用:
+--    Master: mysql -u root -p < init-master.sql
+--    Slave:  mysql -u root -p < init-slave.sql
 -- ──────────────────────────────────────────────
 
 CREATE DATABASE IF NOT EXISTS ops_demo
@@ -8,6 +13,19 @@ CREATE DATABASE IF NOT EXISTS ops_demo
     DEFAULT COLLATE utf8mb4_unicode_ci;
 
 USE ops_demo;
+
+-- ═══════════════════════════════════════════
+-- 业务用户（允许 Java 服务器连接）
+-- ═══════════════════════════════════════════
+-- Java-1（192.168.10.121）
+CREATE USER IF NOT EXISTS 'ops_user'@'192.168.10.121' IDENTIFIED BY 'OpsUser@2024';
+GRANT ALL PRIVILEGES ON ops_demo.* TO 'ops_user'@'192.168.10.121';
+
+-- Java-2（192.168.10.124）
+CREATE USER IF NOT EXISTS 'ops_user'@'192.168.10.124' IDENTIFIED BY 'OpsUser@2024';
+GRANT ALL PRIVILEGES ON ops_demo.* TO 'ops_user'@'192.168.10.124';
+
+FLUSH PRIVILEGES;
 
 -- JPA ddl-auto: update 会自动建表，此脚本用于手动初始化场景
 -- 如需手动建表，取消下方注释：

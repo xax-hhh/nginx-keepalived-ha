@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(jar tf *)",
+      "Bash(mvn clean *)",
+      "Bash(timeout 25 java -jar target/demo-1.0.0.jar)"
+    ]
+  }
+}

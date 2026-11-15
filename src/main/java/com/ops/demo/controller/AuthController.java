@@ -23,27 +23,18 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
-        try {
-            User user = userService.register(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                    "id", user.getId(),
-                    "username", user.getUsername(),
-                    "email", user.getEmail()
-            ));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody RegisterRequest request) {
+        User user = userService.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "id", user.getId(),
+                "username", user.getUsername(),
+                "email", user.getEmail()
+        ));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
-        try {
-            LoginResponse response = userService.authenticate(request);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        LoginResponse response = userService.authenticate(request);
+        return ResponseEntity.ok(response);
     }
 }

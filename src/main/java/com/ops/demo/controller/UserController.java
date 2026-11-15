@@ -1,6 +1,7 @@
 package com.ops.demo.controller;
 
 import com.ops.demo.dto.RegisterRequest;
+import com.ops.demo.dto.UpdateUserRequest;
 import com.ops.demo.model.User;
 import com.ops.demo.service.UserService;
 import jakarta.validation.Valid;
@@ -36,42 +37,30 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createUser(@Valid @RequestBody RegisterRequest request) {
-        try {
-            User user = userService.createUser(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                    "id", user.getId(),
-                    "username", user.getUsername(),
-                    "email", user.getEmail()
-            ));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<Map<String, Object>> createUser(@Valid @RequestBody RegisterRequest request) {
+        User user = userService.createUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "id", user.getId(),
+                "username", user.getUsername(),
+                "email", user.getEmail()
+        ));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(
+    public ResponseEntity<Map<String, Object>> updateUser(
             @PathVariable Long id,
-            @Valid @RequestBody RegisterRequest request) {
-        try {
-            User user = userService.updateUser(id, request);
-            return ResponseEntity.ok(Map.of(
-                    "id", user.getId(),
-                    "username", user.getUsername(),
-                    "email", user.getEmail()
-            ));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+            @Valid @RequestBody UpdateUserRequest request) {
+        User user = userService.updateUser(id, request);
+        return ResponseEntity.ok(Map.of(
+                "id", user.getId(),
+                "username", user.getUsername(),
+                "email", user.getEmail()
+        ));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        try {
-            userService.deleteUser(id);
-            return ResponseEntity.ok(Map.of("message", "用户已删除"));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    public ResponseEntity<Map<String, Object>> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.ok(Map.of("message", "用户已删除"));
     }
 }

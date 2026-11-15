@@ -1,13 +1,17 @@
 server:
   port: 8080
 
+app:
+  server-id: ${SERVER_ID:unknown}
+
 spring:
   application:
     name: linux-ops-demo
+
   datasource:
-    url: jdbc:mysql://localhost:3306/ops_demo?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&characterEncoding=utf8mb4
-    username: root
-    password: root
+    url: jdbc:mysql://192.168.10.122:3306/ops_demo?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&characterEncoding=UTF-8
+    username: ops_user
+    password: OpsUser@2024
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       minimum-idle: 5
@@ -15,6 +19,11 @@ spring:
       idle-timeout: 300000
       max-lifetime: 1200000
       connection-timeout: 30000
+
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
 
   jpa:
     hibernate:
@@ -26,22 +35,9 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
 
-# ──────────────────────────────────────────
-# Redis 扩展预留（后续实训取消注释即可使用）
-# ──────────────────────────────────────────
-# spring.data.redis:
-#   host: localhost
-#   port: 6379
-#   timeout: 3000ms
-#   lettuce:
-#     pool:
-#       max-active: 8
-#       max-idle: 8
-#       min-idle: 0
-
 jwt:
   secret: bXlTZWNyZXRLZXlGb3JKV1RTaWduaW5nRm9yT3BzVHJhaW5pbmdEZW1vUHJvamVjdA==
-  expiration: 86400000  # 24 hours in milliseconds
+  expiration: 86400000
 
 logging:
   level:

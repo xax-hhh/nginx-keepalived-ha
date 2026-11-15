@@ -32,7 +32,7 @@
                 </div>
                 <div class="form-group">
                     <label for="password">密码</label>
-                    <input type="password" id="password" placeholder="请输入密码（至少6位）" required>
+                    <input type="password" id="password" placeholder="请输入密码（至少6位）" required minlength="6">
                 </div>
                 <button type="submit" class="btn btn-primary">提 交</button>
                 <button type="button" id="cancelEdit" class="btn btn-secondary" style="display:none;">取消编辑</button>
@@ -57,19 +57,12 @@
     </div>
 
     <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
     <script src="/js/users.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = '/login.html';
-                return;
-            }
-            document.getElementById('logoutBtn').addEventListener('click', () => {
-                localStorage.removeItem('token');
-                localStorage.removeItem('username');
-                window.location.href = '/login.html';
-            });
+            requireAuth();
+            document.getElementById('logoutBtn').addEventListener('click', logout);
         });
     </script>
 </body>
